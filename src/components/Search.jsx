@@ -10,6 +10,7 @@ class Search extends React.Component {
       category: [],
       query: '',
       products: [],
+      toggle: false,
     };
   }
 
@@ -27,14 +28,21 @@ class Search extends React.Component {
   handleClick = async () => {
     const { query } = this.state;
     const request = await getProductsFromCategoryAndQuery(null, query);
-    console.log(request.results);
-    this.setState({
-      products: request.results,
-    });
+    if (request.results.length === 0) {
+      this.setState({
+        toggle: true,
+      });
+    } else {
+      console.log(request.results);
+      this.setState({
+        products: request.results,
+        toggle: false,
+      });
+    }
   };
 
   render() {
-    const { category, query, products } = this.state;
+    const { category, query, products, toggle } = this.state;
     return (
       <>
         <nav>
@@ -76,17 +84,17 @@ class Search extends React.Component {
           >
             pesquisar
           </button>
-          { products.length === 0 ? <p>Nenhum produto foi encontrado</p> : (
-            products.map((element, i) => (
-              <div
-                data-testid="product"
-                key={ i }
-              >
-                <img src={ element.thumbnail } alt={ element.id } />
-                <p>{element.title}</p>
-                <p>{element.price}</p>
-              </div>
-            ))) }
+          { toggle && <p>Nenhum produto foi encontrado</p> }
+          {products.map((element, i) => (
+            <div
+              data-testid="product"
+              key={ i }
+            >
+              <img src={ element.thumbnail } alt={ element.id } />
+              <p>{element.title}</p>
+              <p>{element.price}</p>
+            </div>
+          ))}
         </div>
       </>
 
