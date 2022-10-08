@@ -11,6 +11,8 @@ class Search extends React.Component {
       query: '',
       products: [],
       toggle: false,
+      categoryRadio: '',
+
     };
   }
 
@@ -20,10 +22,15 @@ class Search extends React.Component {
   }
 
   onInputChange = ({ target: { value, name } }) => {
+  //  const valor = type === 'radio' ? checked : value;
     this.setState({
       [name]: value,
     });
   };
+
+  // handleClickSelect = async () => {
+  // handleClick
+  // };
 
   handleClick = async () => {
     const { query } = this.state;
@@ -61,6 +68,9 @@ class Search extends React.Component {
                 type="radio"
                 value={ element.name }
                 id={ element.id }
+                name="categoryRadio"
+                checked={ this.onInputChange }
+                // onChange={this.onValueChange}
               />
               { element.name }
             </label>
