@@ -12,7 +12,7 @@ class Search extends React.Component {
       products: [],
       toggle: false,
       categoryRadio: '',
-
+      ArrayCategoria: [],
     };
   }
 
@@ -21,16 +21,26 @@ class Search extends React.Component {
     this.setState({ category: newRequest });
   }
 
-  onInputChange = ({ target: { value, name } }) => {
-  //  const valor = type === 'radio' ? checked : value;
+  /* async componentDidUpdate() {
+    const x = await this.handleClickSelect();
+    return x;
+  } */
+
+  onInputChange = ({ target: { value, type, name, id } }) => {
+    const valor = type === 'radio' ? id : value;
     this.setState({
-      [name]: value,
-    });
+      [name]: valor,
+    }, () => this.handleClickSelect());
   };
 
-  // handleClickSelect = async () => {
-  // handleClick
-  // };
+  handleClickSelect = async () => {
+    const { categoryRadio } = this.state;
+    const request = await getProductsFromCategoryAndQuery(categoryRadio, null);
+    // console.log(request.results);
+    this.setState({
+      ArrayCategoria: request.results,
+    });
+  };
 
   handleClick = async () => {
     const { query } = this.state;
@@ -40,16 +50,42 @@ class Search extends React.Component {
         toggle: true,
       });
     } else {
-      console.log(request.results);
+      // console.log(request.results);
       this.setState({
         products: request.results,
         toggle: false,
+        categoryRadio: '',
       });
     }
   };
 
   render() {
-    const { category, query, products, toggle } = this.state;
+    const { category,
+      query,
+      products,
+      toggle,
+      categoryRadio,
+      ArrayCategoria } = this.state;
+    const queryResults = products.map((element, i) => (
+      <div
+        data-testid="product"
+        key={ i }
+      >
+        <img src={ element.thumbnail } alt={ element.id } />
+        <p>{element.title}</p>
+        <p>{element.price}</p>
+      </div>
+    ));
+    const categoryResults = ArrayCategoria.map((e, i) => (
+      <div
+        data-testid="product"
+        key={ i }
+      >
+        <img src={ e.thumbnail } alt={ e.id } />
+        <p>{e.title}</p>
+        <p>{e.price}</p>
+      </div>
+    ));
     return (
       <>
         <nav>
@@ -69,8 +105,8 @@ class Search extends React.Component {
                 value={ element.name }
                 id={ element.id }
                 name="categoryRadio"
-                checked={ this.onInputChange }
-                // onChange={this.onValueChange}
+                onChange={ this.onInputChange }
+                // checked={ this.handleClickSelect }
               />
               { element.name }
             </label>
@@ -94,20 +130,10 @@ class Search extends React.Component {
           >
             pesquisar
           </button>
-          { toggle && <p>Nenhum produto foi encontrado</p> }
-          {products.map((element, i) => (
-            <div
-              data-testid="product"
-              key={ i }
-            >
-              <img src={ element.thumbnail } alt={ element.id } />
-              <p>{element.title}</p>
-              <p>{element.price}</p>
-            </div>
-          ))}
+          {toggle && <p>Nenhum produto foi encontrado</p> }
+          {categoryRadio.length > 0 ? categoryResults : queryResults }
         </div>
       </>
-
     );
   }
 }
