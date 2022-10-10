@@ -1,3 +1,4 @@
+import { element } from 'prop-types';
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { getCategories, getProductsFromCategoryAndQuery } from '../services/api';
@@ -71,9 +72,11 @@ class Search extends React.Component {
         data-testid="product"
         key={ i }
       >
-        <img src={ element.thumbnail } alt={ element.id } />
-        <p>{element.title}</p>
-        <p>{element.price}</p>
+        <NavLink data-testid="product-detail-link" to={element.id}>
+          <img src={ element.thumbnail } alt={ element.id } />
+          <p>{element.title}</p>
+          <p>{element.price}</p>
+        </NavLink>
       </div>
     ));
     const categoryResults = ArrayCategoria.map((e, i) => (
@@ -81,9 +84,11 @@ class Search extends React.Component {
         data-testid="product"
         key={ i }
       >
-        <img src={ e.thumbnail } alt={ e.id } />
-        <p>{e.title}</p>
-        <p>{e.price}</p>
+        <NavLink data-testid="product-detail-link" to={e.id}>
+          <img src={ e.thumbnail } alt={ e.id } />
+          <p>{e.title}</p>
+          <p>{e.price}</p>
+        </NavLink>
       </div>
     ));
     return (
